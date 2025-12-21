@@ -112,7 +112,7 @@
       <Trigger Enabled="true" Id="7530fae2-d683-4870-b8d2-e5e1ab39f062" Name="3a.打开悬浮窗" RegularExpression="^.{15}\S+ 00:0038::cd$">
         <Actions>
           <Action OrderNumber="1" Enabled="False" ActionType="Placeholder" Description="输出信息" DescBgColor="0ff" DescTextColor="000" DescriptionOverride="True" />
-          <Action OrderNumber="2" ActionType="TextAura" TextAuraAlignment="TopCenter" TextAuraEffect="Bold" TextAuraFontSize="21.75" TextAuraForeground="fff" TextAuraBackground="000" TextAuraOutline="fff" TextAuraName="dao" TextAuraExpression="${v:listtmp}" TextAuraXIniExpression="0" TextAuraYIniExpression="0" TextAuraWIniExpression="480" TextAuraHIniExpression="34*${v:counttmp}" TextAuraOIniExpression="60" TextAuraHTickExpression="34*${v:counttmp}" TextAuraFontName="宋体" />
+          <Action OrderNumber="2" ActionType="TextAura" TextAuraAlignment="TopCenter" TextAuraEffect="Bold" TextAuraFontSize="14.25" TextAuraForeground="Aqua" TextAuraName="dao" TextAuraExpression="${v:listtmp}" TextAuraXIniExpression="0" TextAuraYIniExpression="400" TextAuraWIniExpression="280" TextAuraHIniExpression="21*${v:counttmp}" TextAuraOIniExpression="100" TextAuraHTickExpression="21*${v:counttmp}" TextAuraFontName="新宋体" />
         </Actions>
       </Trigger>
     </Triggers>
