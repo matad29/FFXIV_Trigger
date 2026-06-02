@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<TriggernometryExport PluginVersion="2.0.2.3">
+<TriggernometryExport PluginVersion="2.1.2.1">
   <ExportedFolder Id="8a0b5a74-2c79-41fd-a8d7-663742e54da9" Enabled="true" Name="找罐子工具" FFXIVZoneFilterEnabled="True" FfxivZoneFilterRegularExpression="^1252$">
     <Triggers>
       <Trigger Enabled="true" Id="8146516c-5db4-4414-9a4a-b7d5a83a520c" Name="1b.南边罐子" RegularExpression="(?&lt;timestamp&gt;^.{14}) 258 (?&lt;type&gt;102):(?&lt;category&gt;Remove):[^:]*:(?&lt;fateId&gt;000007B9):(?&lt;progress&gt;[^:]*)(?:$|:)">
