@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <TriggernometryExport PluginVersion="2.1.1.2">
-  <ExportedFolder Id="8eb0f043-a733-418d-a33e-2c4f8a0c43aa" Enabled="true" Name="荔枝塔快速复盘工具（指挥用）">
+  <ExportedFolder Id="8eb0f043-a733-418d-a33e-2c4f8a0c43aa" Enabled="false" Name="荔枝塔快速复盘工具（指挥用）">
     <Folders>
       <Folder Id="5661aa5c-83c5-43ef-8e72-5751444d7e5e" Enabled="true" Name="重构" FFXIVZoneFilterEnabled="True" FfxivZoneFilterRegularExpression="^1252$">
         <Folders>
@@ -168,12 +168,6 @@
           </Folder>
           <Folder Id="4121441c-c8ea-478c-ba6a-d2d4472525be" Enabled="true" Name="2.boss2">
             <Triggers>
-              <Trigger Enabled="true" Id="40e16106-2cf6-4113-b53d-7b49ce14f024" Name="2.获取雪球点名C2" RegularExpression="^.{15}\S+ 14:(?&lt;sid&gt;4.{7}):[^:]*:A5D1:[^:]*:(?&lt;tid&gt;1.{7}):[^:]*:[^:]*:-800.00:349.50" Sequential="True">
-                <Actions>
-                  <Action OrderNumber="1" ActionType="Variable" ListVariableOp="Push" ListVariableExpression="${_ffxiventity[${tid}].Name}" VariableOp="SetString" VariableName="The_Forked_Tower_Blood_boss2_snow2" VariableExpression="C点方向击退：${_ffxiventity[${tid}].Name}" />
-                  <Action OrderNumber="2" ActionType="NamedCallback" ExecutionDelayExpression="100" NamedCallbackName="command" NamedCallbackParam="/e &#xD;&#xA;${v:The_Forked_Tower_Blood_boss2_snow1}&#xD;&#xA;${v:The_Forked_Tower_Blood_boss2_snow2}" UseTTSTextExpression="${lvar:tuanyoumingzi[${var:i}]}" VariableOp="SetString" VariableName="x" />
-                </Actions>
-              </Trigger>
               <Trigger Enabled="false" Id="4f366efe-49c6-465e-b250-4bf2266ff299" Name="1a.获取蓝球位置" RegularExpression="^.{15}\S+ 107:(?&lt;sid&gt;4.{7}):(?&lt;aid&gt;A5E0):(?&lt;x&gt;[^:]+):(?&lt;y&gt;[^:]+):(?&lt;z&gt;[^:]+):(?&lt;h&gt;[^:]+)" Sequential="True">
                 <Actions>
                   <Action OrderNumber="1" ActionType="Trigger" TriggerOp="DisableTrigger" TriggerId="4f366efe-49c6-465e-b250-4bf2266ff299" TriggerForce="regexp,active" />
@@ -256,15 +250,9 @@
                   <Action OrderNumber="1" ActionType="ExecuteScript" Asynchronous="False" ExecScriptExpression="using System;&#xD;&#xA;using System.Collections.Generic;&#xD;&#xA;using System.Linq;&#xD;&#xA;using Triggernometry;&#xD;&#xA;using Triggernometry.Core;&#xD;&#xA;using Triggernometry.Core.Variables;&#xD;&#xA;using Triggernometry.FFXIV;&#xD;&#xA;&#xD;&#xA;// 关键修改：通过VariableStore获取全局变量（替代Interpreter.StaticHelpers）&#xD;&#xA;VariableStore globalVarStore = RealPlugin.Instance.GetVariableStore(true); // true=全局变量&#xD;&#xA;&#xD;&#xA;// 获取全局武士技能字典（与初始化逻辑保持一致，替换原有Interpreter读取方式）&#xD;&#xA;var allBossSkills = globalVarStore.GetDictVariable(&quot;The_Forked_Tower_Blood_all_boss_skills&quot;);&#xD;&#xA;&#xD;&#xA;if (allBossSkills == null)&#xD;&#xA;{&#xD;&#xA;    return;&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;// 获取当前触发的技能相关参数&#xD;&#xA;string aid = $&quot;${aid}&quot;; // 技能ID&#xD;&#xA;string sid = $&quot;${sid}&quot;; // 玩家ID&#xD;&#xA;int currentCount = 0;&#xD;&#xA;&#xD;&#xA;// 定义技能与BOSS的映射关系（根据实际情况调整）&#xD;&#xA;var skillBossMap = new Dictionary&lt;string, (string bossKey, string skillName)&gt;&#xD;&#xA;{&#xD;&#xA;    {&quot;A286&quot;, (&quot;boss2&quot;, &quot;扔钱&quot;)},  // A286对应boss1的扔钱技能&#xD;&#xA;    {&quot;A285&quot;, (&quot;boss2&quot;, &quot;居合&quot;)}   // A285对应boss1的居合技能&#xD;&#xA;};&#xD;&#xA;&#xD;&#xA;// 检查当前技能是否在监控列表中&#xD;&#xA;if (skillBossMap.TryGetValue(aid, out var skillInfo))&#xD;&#xA;{&#xD;&#xA;    // 获取对应BOSS的技能字典&#xD;&#xA;    var bossDict = allBossSkills.GetValue(skillInfo.bossKey) as VariableDictionary;&#xD;&#xA;    if (bossDict == null)&#xD;&#xA;    {&#xD;&#xA;        return;&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    // 获取对应技能的玩家计数字典&#xD;&#xA;    var skillDict = bossDict.GetValue(skillInfo.skillName) as VariableDictionary;&#xD;&#xA;    if (skillDict == null)&#xD;&#xA;    {&#xD;&#xA;        return;&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    // 查找匹配的玩家并更新计数（使用初始化时的唯一键格式）&#xD;&#xA;    var targetKey = skillDict.Values&#xD;&#xA;        .Select(v =&gt; v.Key)&#xD;&#xA;        .FirstOrDefault(key =&gt; key.StartsWith(sid));&#xD;&#xA;&#xD;&#xA;    if (!string.IsNullOrEmpty(targetKey))&#xD;&#xA;    {&#xD;&#xA;        // 解析当前计数并加1&#xD;&#xA;        if (int.TryParse(skillDict.GetStringValue(targetKey), out currentCount))&#xD;&#xA;        {&#xD;&#xA;            skillDict.SetValue(targetKey, (currentCount + 1).ToString());&#xD;&#xA;            &#xD;&#xA;            // 保存更新后的字典（替换Interpreter写入方式）&#xD;&#xA;            bossDict.SetValue(skillInfo.skillName, skillDict);&#xD;&#xA;            allBossSkills.SetValue(skillInfo.bossKey, bossDict);&#xD;&#xA;            globalVarStore.Dict[&quot;The_Forked_Tower_Blood_all_boss_skills&quot;] = allBossSkills;&#xD;&#xA;        }&#xD;&#xA;    }&#xD;&#xA;}" />
                 </Actions>
               </Trigger>
-              <Trigger Enabled="true" Id="a78a07f1-9aaf-42b9-8d27-75f6541a4362" Name="2.获取雪球点名A2" RegularExpression="^.{15}\S+ 14:(?&lt;sid&gt;4.{7}):[^:]*:A5D1:[^:]*:(?&lt;tid&gt;1.{7}):[^:]*:[^:]*:-809.09:365.25" Sequential="True">
+              <Trigger Enabled="true" Id="c57a2ba6-5102-480f-b566-9a928e8e69b7" Name="2.获取雪球点名（冰冻的特里同）" RegularExpression="^.{15}\S+ 14:(?&lt;sid&gt;4.{7}):冰冻的特里同:A5D1:[^:]*:(?&lt;tid&gt;1.{7}):[^:]*:[^:]*:" Sequential="True">
                 <Actions>
-                  <Action OrderNumber="1" ActionType="Variable" ListVariableOp="Push" ListVariableExpression="${_ffxiventity[${tid}].Name}" VariableOp="SetString" VariableName="The_Forked_Tower_Blood_boss2_snow1" VariableExpression="A点方向击退：${_ffxiventity[${tid}].Name}" />
-                </Actions>
-              </Trigger>
-              <Trigger Enabled="true" Id="c57a2ba6-5102-480f-b566-9a928e8e69b7" Name="2.获取雪球点名4" RegularExpression="^.{15}\S+ 14:(?&lt;sid&gt;4.{7}):[^:]*:A5D1:[^:]*:(?&lt;tid&gt;1.{7}):[^:]*:[^:]*:-800.00:390.00" Sequential="True">
-                <Actions>
-                  <Action OrderNumber="1" ActionType="Variable" ListVariableOp="Push" ListVariableExpression="${_ffxiventity[${tid}].Name}" VariableOp="SetString" VariableName="The_Forked_Tower_Blood_boss2_snow2" VariableExpression="4点方向击退：${_ffxiventity[${tid}].Name}" />
-                  <Action OrderNumber="2" ActionType="NamedCallback" ExecutionDelayExpression="100" NamedCallbackName="command" NamedCallbackParam="/e &#xD;&#xA;${v:The_Forked_Tower_Blood_boss2_snow1}&#xD;&#xA;${v:The_Forked_Tower_Blood_boss2_snow2}" UseTTSTextExpression="${lvar:tuanyoumingzi[${var:i}]}" VariableOp="SetString" VariableName="x" />
+                  <Action OrderNumber="1" ActionType="Variable" ListVariableOp="Push" ListVariableExpression="${_ffxiventity[${tid}].Name}" VariableOp="SetString" VariableName="The_Forked_Tower_Blood_boss2_snow2" VariableExpression="冰冻的特里同,${_ffxiventity[${tid}].Name}" />
                 </Actions>
               </Trigger>
               <Trigger Enabled="false" Id="4f3a5581-c692-4c1a-b9b2-fda18b26063f" Name="3.火球" RegularExpression="(?&lt;timestamp&gt;^.{14}) 271 (?&lt;type&gt;10F):(?&lt;id&gt;[^:]*):(?&lt;heading&gt;[^:]*)(?::[^:]*){2}:(?&lt;x&gt;[^:]*):(?&lt;y&gt;[^:]*):(?&lt;z&gt;[^:]*)(?:$|:)" Sequential="True">
@@ -303,20 +291,14 @@
                   </Action>
                 </Actions>
               </Trigger>
-              <Trigger Enabled="true" Id="935c3147-4ad3-43d4-bb8c-a5bdef7a7a60" Name="2.获取雪球点名A" RegularExpression="^.{15}\S+ 14:(?&lt;sid&gt;4.{7}):[^:]*:A5D1:[^:]*:(?&lt;tid&gt;1.{7}):[^:]*:[^:]*:-778.79:338.79" Sequential="True">
+              <Trigger Enabled="true" Id="4dbeec40-7059-4359-b4f9-f173da2e1b3e" Name="2.播报雪球点名" RegularExpression="^.{15}\S+ 14:(?&lt;sid&gt;4.{7}):冰冻的福博斯:A89A:[^:]*:(?&lt;tid&gt;4.{7}):[^:]*:[^:]*:(?&lt;x&gt;[^:]+):(?&lt;y&gt;[^:]+):(?&lt;z&gt;[^:]+):" Sequential="True">
                 <Actions>
-                  <Action OrderNumber="1" ActionType="Variable" ListVariableOp="Push" ListVariableExpression="${_ffxiventity[${tid}].Name}" VariableOp="SetString" VariableName="The_Forked_Tower_Blood_boss2_snow1" VariableExpression="A点方向击退：${_ffxiventity[${tid}].Name}" />
+                  <Action OrderNumber="1" ActionType="ExecuteScript" ExecScriptExpression="using System;&#xD;&#xA;using Triggernometry;&#xD;&#xA;using Triggernometry.Core;&#xD;&#xA;using Triggernometry.Core.Variables;&#xD;&#xA;&#xD;&#xA;VariableStore store = RealPlugin.Instance.GetVariableStore(true);&#xD;&#xA;&#xD;&#xA;// 读取冰冻对应关系&#xD;&#xA;string snow1 = store.GetScalarVariable(&quot;The_Forked_Tower_Blood_boss2_snow1&quot;).Value?.ToString() ?? &quot;&quot;;&#xD;&#xA;string snow2 = store.GetScalarVariable(&quot;The_Forked_Tower_Blood_boss2_snow2&quot;).Value?.ToString() ?? &quot;&quot;;&#xD;&#xA;&#xD;&#xA;string name1 = &quot;&quot;;&#xD;&#xA;string name2 = &quot;&quot;;&#xD;&#xA;if (!string.IsNullOrEmpty(snow1))&#xD;&#xA;{&#xD;&#xA;    var parts = snow1.Split(',');&#xD;&#xA;    if (parts.Length &gt;= 2) name1 = parts[1];&#xD;&#xA;}&#xD;&#xA;if (!string.IsNullOrEmpty(snow2))&#xD;&#xA;{&#xD;&#xA;    var parts = snow2.Split(',');&#xD;&#xA;    if (parts.Length &gt;= 2) name2 = parts[1];&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;float fx = (float)${x};&#xD;&#xA;float fy = (float)${y};&#xD;&#xA;&#xD;&#xA;// 2点坐标&#xD;&#xA;float twoX = -827.51f;&#xD;&#xA;float twoY = 371.94f;&#xD;&#xA;&#xD;&#xA;float distTo2 = (float)Math.Sqrt((fx - twoX) * (fx - twoX) + (fy - twoY) * (fy - twoY));&#xD;&#xA;&#xD;&#xA;string fbsTarget, tltTarget;&#xD;&#xA;if (distTo2 &lt;= 3f)&#xD;&#xA;{&#xD;&#xA;    fbsTarget = &quot;2&quot;;&#xD;&#xA;    tltTarget = &quot;4&quot;;&#xD;&#xA;}&#xD;&#xA;else&#xD;&#xA;{&#xD;&#xA;    fbsTarget = &quot;A&quot;;&#xD;&#xA;    tltTarget = &quot;C&quot;;&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;RealPlugin.plug.InvokeNamedCallback(&quot;command&quot;, $&quot;/e {name1} 去{fbsTarget}，{name2} 去{tltTarget}&quot;);" />
                 </Actions>
               </Trigger>
-              <Trigger Enabled="true" Id="4dbeec40-7059-4359-b4f9-f173da2e1b3e" Name="2.获取雪球点名C" RegularExpression="^.{15}\S+ 14:(?&lt;sid&gt;4.{7}):[^:]*:A5D1:[^:]*:(?&lt;tid&gt;1.{7}):[^:]*:[^:]*:-813.85:386.61" Sequential="True">
+              <Trigger Enabled="true" Id="c7fd6fdc-dd16-42d1-ac03-80c4233860d9" Name="2.获取雪球点名（冰冻的福博斯）" RegularExpression="^.{15}\S+ 14:(?&lt;sid&gt;4.{7}):冰冻的福博斯:A5D1:[^:]*:(?&lt;tid&gt;1.{7}):[^:]*:[^:]*:" Sequential="True">
                 <Actions>
-                  <Action OrderNumber="1" ActionType="Variable" ListVariableOp="Push" ListVariableExpression="${_ffxiventity[${tid}].Name}" VariableOp="SetString" VariableName="The_Forked_Tower_Blood_boss2_snow2" VariableExpression="C点方向击退：${_ffxiventity[${tid}].Name}" />
-                  <Action OrderNumber="2" ActionType="NamedCallback" ExecutionDelayExpression="100" NamedCallbackName="command" NamedCallbackParam="/e &#xD;&#xA;${v:The_Forked_Tower_Blood_boss2_snow1}&#xD;&#xA;${v:The_Forked_Tower_Blood_boss2_snow2}" UseTTSTextExpression="${lvar:tuanyoumingzi[${var:i}]}" VariableOp="SetString" VariableName="x" />
-                </Actions>
-              </Trigger>
-              <Trigger Enabled="true" Id="c7fd6fdc-dd16-42d1-ac03-80c4233860d9" Name="2.获取雪球点名2(作废重写中" RegularExpression="^.{15}\S+ 14:(?&lt;sid&gt;4.{7}):[^:]*:A5D1:[^:]*:(?&lt;tid&gt;1.{7}):[^:]*:[^:]*:-796.08:330.26" Sequential="True">
-                <Actions>
-                  <Action OrderNumber="1" ActionType="Variable" ListVariableOp="Push" ListVariableExpression="${_ffxiventity[${tid}].Name}" VariableOp="SetString" VariableName="The_Forked_Tower_Blood_boss2_snow1" VariableExpression="2点方向击退：${_ffxiventity[${tid}].Name}" />
+                  <Action OrderNumber="1" ActionType="Variable" ListVariableOp="Push" ListVariableExpression="${_ffxiventity[${tid}].Name}" VariableOp="SetString" VariableName="The_Forked_Tower_Blood_boss2_snow1" VariableExpression="冰冻的福博斯,${_ffxiventity[${tid}].Name}" />
                 </Actions>
               </Trigger>
             </Triggers>
